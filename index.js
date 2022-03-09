@@ -5,7 +5,6 @@ const hbs = require('hbs')
 const showdown  = require('showdown')
 
 const app = express()
-const port = 3000
 const converter = new showdown.Converter()
 
 app.engine('html', hbs.__express)
@@ -29,6 +28,6 @@ app.get('/:url_path(*)', (req, res) => {
     res.render(path.join(__dirname + '/template.html'), { content })
 })
 
-app.listen(port, () => {
-    console.log(`App listening on port ${port}`)
+app.listen(process.env.PORT || 3000, () => {
+    console.log(`App listening`)
 })
