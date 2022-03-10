@@ -4,30 +4,50 @@ const fs = require('fs')
 const hbs = require('hbs')
 const showdown  = require('showdown')
 
+let server
 const app = express()
 const converter = new showdown.Converter()
 
 app.engine('html', hbs.__express)
 
-app.get('/:url_path(*)', (req, res) => {
+const processFileContents = (filePath) => {
+    // Read file content and store as a string
+    let content = fs.readFileSync(filePath, 'utf8')
+
+    // Convert markdown in string to HTML
+    content = converter.makeHtml(content)
+
+    return content
+}
+
+const renderPage = (req, res) => {
     const contentPath = path.join(`${__dirname}/content/${req.params.url_path}/index.md`)
 
     let content
     try {
-        // Read file content and store as a string
-        content = fs.readFileSync(contentPath, 'utf8')
-
-        // Convert markdown in string to HTML
-        content = converter.makeHtml(content)
+        content = processFileContents(contentPath)
+        res.status(200)
     } catch (error) {
-        // Placeholder in case url_path does not have content
+        // Placeholder in case url_path does not lead to a directory
         content = '<h2>Error 404</h2><p>Page not found</p>'
         res.status(404)
     }
     
     res.render(path.join(__dirname + '/template.html'), { content })
-})
+}
 
-app.listen(process.env.PORT || 3000, () => {
+app.get('/:url_path(*)', renderPage)
+
+server = app.listen(process.env.PORT || 3000, () => {
     console.log(`App listening`)
 })
+
+const stopServer = () => {
+    server.close()
+}
+
+module.exports = {
+    processFileContents,
+    renderPage,
+    stopServer
+}
