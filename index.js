@@ -39,7 +39,7 @@ const renderPage = (req, res) => {
 app.get('/:url_path(*)', renderPage)
 
 server = app.listen(process.env.PORT || 3000, () => {
-    console.log(`App listening`)
+    console.log(`App listening on port: ` + (process.env.PORT || 3000))
 })
 
 const stopServer = () => {
