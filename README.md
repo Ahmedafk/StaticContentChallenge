@@ -1,6 +1,3 @@
-# Domain
-https://exercise-pension-bee.herokuapp.com/
-
 ### Start local instance
 `npm start`
 
